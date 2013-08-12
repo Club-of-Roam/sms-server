@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>mms-test.png</file>
+    </qresource>
+</RCC>
