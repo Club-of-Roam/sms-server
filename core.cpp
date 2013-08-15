@@ -21,7 +21,7 @@ void Core::startCore()
     connect(m_network_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
     // Start status updater
-    QTimer::singleShot(300000, this, SLOT(updateStatusUrl())); // 5 minutes
+    QTimer::singleShot(0, this, SLOT(updateStatusUrl())); // initial launch
 
     emit coreLogging("server started.");
 }
@@ -43,7 +43,7 @@ void Core::messageAdded(const QMessageId& id, const QMessageManager::Notificatio
 
     if (message.type() == QMessage::Mms) {
         // take the first attachement
-        msg = QString(message.subject());
+        msg = message.subject();
         QMessageContentContainerIdList list = message.attachmentIds();
         if (!list.isEmpty()) {
             for (int i=0; i<list.count(); i++) {
@@ -59,7 +59,7 @@ void Core::messageAdded(const QMessageId& id, const QMessageManager::Notificatio
         // forward mms message
         this->forwardMessage(msisdn, msg, filename, img);
     } else {
-        // get the content
+        // get the conten
         msg = message.textContent();
 
         // forward sms message
@@ -96,7 +96,8 @@ void Core::forwardMessage(QString msisdn, QString msg, QString filename, QPixmap
 
     // Message
     data.append("Content-Disposition: form-data; name=\"msg\"\r\n\r\n");
-    data.append(QString("%1\r\n").arg(msg));
+    data.append(msg.toUtf8());
+    data.append(QString("\r\n"));
     data.append("--" + bound + "\r\n");
 
     // Phone ID
